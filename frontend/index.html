@@ -96,11 +96,11 @@
           const pokemon = pokemons[i]
           const item = document.createElement("p");
           // Botton de eliminar
-          const deleteButton = document.createElement("button");
-          deleteButton.textContent = "Eliminar";
-          deleteButton.className = "btn btn-danger";
-          deleteButton.onclick = () => {
-            if (confirm(`¿Estás seguro de eliminar a ${pokemon.nombre}?`)) {
+          const botonEliminar = document.createElement("button");
+          botonEliminar.textContent = "Eliminar";
+          botonEliminar.className = "btn btn-danger";
+          botonEliminar.onclick = () => {
+            if (confirm(`¿Estas seguro de eliminar a ${pokemon.nombre}?`)) {
                    fetch(`http://localhost:5000/pokemons/${pokemon.id}`, { method: "DELETE",})
                    .then(respuesta_recibida)
                    .then(() => { item.remove(); }) // Eliminar el elemento de la lista
@@ -108,10 +108,10 @@
               }
           };
           // Botton de editar
-          const editButton = document.createElement("button");
-          editButton.textContent = "Editar";
-          editButton.className = "btn btn-secondary";
-          editButton.onclick = () => {
+          const botonEditar = document.createElement("button");
+          botonEditar.textContent = "Editar";
+          botonEditar.className = "btn btn-secondary";
+          botonEditar.onclick = () => {
             // Todo esto para hacer que te lo abra en otra pestaña x-x
             const url = `/editar?id=${pokemon.id}`;
             const a = document.createElement("a");
@@ -121,9 +121,9 @@
           };
     
           item.innerHTML = `#${pokemon.id} ${pokemon.nombre} - Tipo: ${conseguir_TipoNombre(pokemon.tipo, pokemon.tipo2)} {`;
-          item.appendChild(deleteButton);
+          item.appendChild(botonEliminar);
           item.appendChild(document.createTextNode("   ")) // Agrega 3 espacios (para que la pagina sea bonito ,3 )
-          item.appendChild(editButton)
+          item.appendChild(botonEditar)
           item.appendChild(document.createTextNode("}"))  // Para que sea bonito
           container.appendChild(item);
         }
