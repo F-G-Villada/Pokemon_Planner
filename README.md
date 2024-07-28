@@ -1,1 +1,1 @@
-# pokemon_planner
+# pokemon_planners
