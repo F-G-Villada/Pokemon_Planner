@@ -154,7 +154,7 @@
             const pokemonExistente = data.find(pokemon => pokemon.nombre === nombre);
             if (pokemonExistente) {
               alert(`El Pokemon con nombre '${nombre}' ya existe. Por favor, elija otro nombre.`);
-              return null; // Da null si el Pokemon ya existe
+              return null; 
             }
   
             const pokemonData = {
@@ -169,7 +169,7 @@
         function respuesta_creacion(data) {
             if (data.success) {
                 alert(`Pokemon creado con exito!`);
-                window.location.href = `/` // Lo redigire a la pagina principal y puede ver su Pokemon agregado
+                window.location.href = `/` 
             }
         }
 
@@ -178,8 +178,7 @@
             const nombre = document.getElementById('nuevo_nombre').value;
             const tipo1 = document.getElementById('nuevo_tipo1').value;
             const tipo2 = document.getElementById('nuevo_tipo2').value;
-            // Para ver info.
-            console.log(`Crear pokemon con nombre ${nombre}, tipo 1 ${tipo1} y tipo 2 ${tipo2}`);
+            
 
             fetch('http://localhost:5000/pokemons')
               .then(respuesta_recibida)

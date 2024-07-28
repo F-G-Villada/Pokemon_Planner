@@ -95,6 +95,7 @@
         for (let i = 0; i < pokemons.length; i++) {
           const pokemon = pokemons[i]
           const item = document.createElement("p");
+          
           // Botton de eliminar
           const botonEliminar = document.createElement("button");
           botonEliminar.textContent = "Eliminar";
@@ -103,7 +104,7 @@
             if (confirm(`¿Estas seguro de eliminar a ${pokemon.nombre}?`)) {
                    fetch(`http://localhost:5000/pokemons/${pokemon.id}`, { method: "DELETE",})
                    .then(respuesta_recibida)
-                   .then(() => { item.remove(); }) // Eliminar el elemento de la lista
+                   .then(() => { item.remove(); }) 
                    .catch(manegar_error);
               }
           };
@@ -112,7 +113,7 @@
           botonEditar.textContent = "Editar";
           botonEditar.className = "btn btn-secondary";
           botonEditar.onclick = () => {
-            // Todo esto para hacer que te lo abra en otra pestaña x-x
+            
             const url = `/editar?id=${pokemon.id}`;
             const a = document.createElement("a");
             a.href = url;
@@ -122,9 +123,9 @@
     
           item.innerHTML = `#${pokemon.id} ${pokemon.nombre} - Tipo: ${conseguir_TipoNombre(pokemon.tipo, pokemon.tipo2)} {`;
           item.appendChild(botonEliminar);
-          item.appendChild(document.createTextNode("   ")) // Agrega 3 espacios (para que la pagina sea bonito ,3 )
+          item.appendChild(document.createTextNode("   ")) 
           item.appendChild(botonEditar)
-          item.appendChild(document.createTextNode("}"))  // Para que sea bonito
+          item.appendChild(document.createTextNode("}"))  
           container.appendChild(item);
         }
       }

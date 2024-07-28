@@ -86,7 +86,7 @@
     fetch(`http://localhost:5000/pokemons/${idPokemon}`)
     .then(respuesta_recibida)
     .then(pokemonData => { document.getElementById('nuevo_nombre').value = pokemonData.nombre; }); 
-    // Muestra los valores actuales del Pokemon q se esta editando en los campos del formulario (Solo el nombre...)
+    // Muestra los valores actuales del Pokemon q se esta editando en los campos del formulario (Solo el nombre)
       
     function manegar_error(error) {
         alert(`Error al editar el Pokemon: ${error.message}`);
@@ -162,7 +162,7 @@
     function respuesta_edicion(data) {
         if (data.success) {
             alert(`Pokemon editado con exito!`);
-            window.location.href = `/` // Lo redigire a la pagina principal y puede ver su Pokemon editado
+            window.location.href = `/` 
             }
     }
 

@@ -153,7 +153,7 @@ def eliminar_pokemon(id_pokemon):
     return jsonify({'Mensaje': 'Pokemon eliminado con exito'})
 
 
-# Edita un Pokemon en particular ( Este deberia recibir http://localhost:5000/pokemons/${id} )
+# Edita un Pokemon en particular 
 @app.route("/pokemons/", methods=["PUT"])
 def editar_pokemon():
     pokemon_data = request.json
@@ -173,9 +173,9 @@ def editar_pokemon():
     
     # Verifica si el nombre nuevo coindice con el nombre antiguo
     if nombre == pokemon.nombre:
-        nombre = pokemon.nombre   # Mantiene el nombre antiguo
+        nombre = pokemon.nombre   
     else: 
-        pokemon.nombre = nombre   # Lo actualiza
+        pokemon.nombre = nombre   
 
     # Actualizar los datos del Pokémon
     pokemon.tipo_id1 = tipo1
@@ -271,7 +271,7 @@ def crear_movimiento(id_tipo):
         poder_nuevo = data.get('poder')
         nombre_nuevo = data.get('nombre')
         # Verifica si el nombre ya existe
-        if Movimiento.query.filter_by(nombre=nombre_nuevo).first() is None: #Si no existe, da None
+        if Movimiento.query.filter_by(nombre=nombre_nuevo).first() is None: 
             pass
         else:
             return jsonify(f"Error : El Movimiento'{nombre_nuevo}' ya existe. Por favor, elige otro nombre.")
