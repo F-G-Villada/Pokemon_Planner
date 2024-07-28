@@ -1,0 +1,198 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Editor!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        #tipos-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .tipo-card {
+            width: 100px;
+            margin: 5px;
+            padding: 5px;
+            border: 1px solid #cfcbcb;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tipo-card-body {
+            padding: 5px;
+        }
+
+        .tipo-titulo {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .tipo-nombre {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body data-bs-theme="dark">
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Editar Pokemon!</h2>
+                        <form onsubmit="editar_pokemon(event)">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nuevo_nombre" name="nuevo_nombre" value="" placeholder="" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tipo1">Seleccione un tipo!</label>
+                                <select name="nuevo_tipo1" id="nuevo_tipo1" value="" required>
+                                    <!-- Opciones  -->
+                                </select>
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tipo1">Seleccione un segundo tipo! (opcional)</label>
+                                <select name="nuevo_tipo2" id="nuevo_tipo2" value="">
+                                    <option value=""></option> 
+                                    <!-- Opciones  -->
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">Confirmar cambios!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div id="tipos-container">
+                    <!-- Informacion sobre que numero representa c/tipo -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+     
+    const urlParams = new URLSearchParams(window.location.search);
+    const idPokemon = parseInt(urlParams.get('id'),10);
+
+    fetch(`http://localhost:5000/pokemons/${idPokemon}`)
+    .then(respuesta_recibida)
+    .then(pokemonData => { document.getElementById('nuevo_nombre').value = pokemonData.nombre; }); 
+    // Muestra los valores actuales del Pokemon q se esta editando en los campos del formulario (Solo el nombre...)
+      
+    function manegar_error(error) {
+        alert(`Error al editar el Pokemon: ${error.message}`);
+        console.log('Error', error)
+    }
+
+    function respuesta_recibida(response) {
+        return response.json()
+    }
+
+    function manegar_opciones(tipos) {
+            const selectTipo1 = document.getElementById('nuevo_tipo1');
+            const selectTipo2 = document.getElementById('nuevo_tipo2');
+            selectTipo2.innerHTML = '<option value=""></option>'; // Esto es para la opcion nula!
+            for (let i = 0; i < tipos.length; i++) {
+                 const tipo = tipos[i];
+                 const option = document.createElement('option');
+                 option.value = tipo.id;
+                 option.textContent = tipo.nombre;
+                 selectTipo1.appendChild(option);
+                 const option2 = document.createElement('option');
+                 option2.value = tipo.id;
+                 option2.textContent = tipo.nombre;
+                 selectTipo2.appendChild(option2);
+            }
+    }
+
+    function manegar_tipoCard(tipos) {
+            const tiposContainer = document.getElementById('tipos-container');
+            for (let i = 0; i < tipos.length; i++) {
+                 const tipo = tipos[i];
+                 const tipoCard = document.createElement('div');
+                 tipoCard.classList.add('tipo-card');
+                 const tipoCardBody = document.createElement('div');
+                 tipoCardBody.classList.add('tipo-card-body');
+                 const tipoId = document.createElement('h5');
+                 tipoId.classList.add('tipo-titulo');
+                 tipoId.textContent = `Ver informacion sobre el tipo`
+                 const tipoNombre = document.createElement('a');
+                 tipoNombre.classList.add('tipo-nombre');
+                 tipoNombre.href = `http://localhost:8000/tipos/?id=${tipo.id}`;  
+                 tipoNombre.target ="_blank"; 
+                 tipoNombre.textContent = tipo.nombre; 
+                 tipoCardBody.appendChild(tipoId);
+                 tipoCardBody.appendChild(tipoNombre);
+                 tipoCard.appendChild(tipoCardBody);
+                 tiposContainer.appendChild(tipoCard);
+                }
+        }
+
+    fetch('http://localhost:5000/tipos')
+        .then(respuesta_recibida)
+        .then(tipos => { manegar_opciones(tipos); manegar_tipoCard(tipos); })
+        .catch(manegar_error)
+
+
+    function verificar_edicion_pokemon(data, nombre, tipo1, tipo2) {
+        // Filtra la lista de Pokemon para verificar si el nombre ya existe (Si el Pokemon existe pero es el que se esta editando, devuelve pokemonData)
+        const pokemonExistente = data.find(pokemon => (pokemon.nombre === nombre) && (pokemon.id !== idPokemon));
+        if (pokemonExistente) {
+            alert(`El nombre "${nombre}" ya existe. Por favor, elija otro nombre.`);
+            return null;
+        }
+        const pokemonData = {
+            id: idPokemon,
+            nombre,
+            tipo_id1: tipo1,
+            tipo_id2: tipo2 === ''? null : tipo2 // Si el usuario selecciono "", se envia null
+        };
+        return pokemonData;
+    }
+
+    function respuesta_edicion(data) {
+        if (data.success) {
+            alert(`Pokemon editado con exito!`);
+            window.location.href = `/` // Lo redigire a la pagina principal y puede ver su Pokemon editado
+            }
+    }
+
+    function editar_pokemon(event) {
+        event.preventDefault();
+
+        // Obtiene los valores de los campos del formulario
+        const nombre = document.getElementById('nuevo_nombre').value;
+        const tipo1 = document.getElementById('nuevo_tipo1').value;
+        const tipo2 = document.getElementById('nuevo_tipo2').value;
+
+        fetch('http://localhost:5000/pokemons/')
+         .then(respuesta_recibida)
+         .then(data => verificar_edicion_pokemon(data, nombre, tipo1, tipo2) )
+         .then(pokemonData => {
+            if (pokemonData) { // Verifica si pokemonData es diferente de null
+                fetch('http://localhost:5000/pokemons/', {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(pokemonData)
+                })
+                .then(respuesta_recibida)
+                .then(respuesta_edicion)
+                .catch(manegar_error);
+            }
+         });
+    }
+
+    </script>
+</body>
+</html>
